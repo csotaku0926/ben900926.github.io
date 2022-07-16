@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Moon Parallex Scroll</title>
+        <link rel="stylesheet" type="text/css" href="style.css">
+    </head>
+
+    <body>
+        <header>
+            <a href="#" class="logo">LOGO</a>
+            <ul>
+                <li><a href="#" class="home">Home</a></li>
+                <li><a href="#">About</a></li>
+                <li><a href="#">Work</a></li>
+                <li><a href="#">Contact</a></li>
+            </ul>
+        </header>
+        <section>
+            <img src="stars.png" id="stars">
+            <img src="moon.png" id="moon">
+            <img src="mountains_behind.png" id="mountains_behind">
+            <h2 id="text">Moon Light</h2>
+            <img src="mountains_front.png" id="mountains_front">
+            <a href="#" id="button">Explore</a>
+        </section>
+        <div class="article">
+            <h2>Parallel Scrolling Effect</h2>
+            <br><br>
+            <p> 
+                This is a practice made by benson liu!
+                <br><br>
+                Testing Testing
+                <br><br>
+                It's ok to feel sad when a story ends.
+            </p>
+        </div>
+
+        <script>
+            let stars = document.getElementById("stars");
+            let moon = document.getElementById("moon");
+            let mountains_behind = document.getElementById("mountains_behind");
+            let text = document.getElementById("text");
+            let button = document.getElementById("button");
+            let header = document.querySelector("header");
+            window.addEventListener('scroll',function(){
+                let scroll_y = window.scrollY;
+                stars.style.left = scroll_y * 0.25 + 'px';
+                moon.style.top = scroll_y * 1.25 + 'px';
+                mountains_behind.style.top = scroll_y * 0.5 + 'px';
+                text.style.marginRight = 1000 - scroll_y * 4 + 'px';
+                text.style.marginTop = scroll_y * 0.5 + 'px';
+                button.style.marginTop = scroll_y * 0.5 + 'px';
+                header.style.marginTop = scroll_y * 0.5 + 'px';
+            })
+        </script>
+    </body>
+</html>

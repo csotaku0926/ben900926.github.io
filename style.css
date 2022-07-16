@@ -1,0 +1,141 @@
+*{
+    margin:0;
+    padding: 0;
+    box-sizing: border-box; /* border applied on the border*/
+}
+
+body{
+    background: linear-gradient(#2b1055,#7597DE);
+    min-height: 100vh; /*expand to full viewport*/
+}
+
+
+header{
+    position : absolute; /*和照片獨立顯示*/
+    top : 0;
+    right : 0;
+    width : 100%;
+    display: flex;
+    justify-content: space-between;
+    padding : 30px 90px;
+    align-items: center;
+    z-index : 1000; /*header can be shown in upper layer*/
+}
+
+.logo{
+    text-transform: uppercase;
+    text-decoration: none;
+    color: white;
+    font-family: sans-serif;
+    font-weight: bold; /* bold font*/
+    font-size: 2em;
+    letter-spacing: 2px;
+}
+
+header ul{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+header ul li{
+    list-style: none;
+    margin : 10px;
+}
+
+header ul li a{
+    text-decoration: none;
+    padding : 5px 15px;
+    color : #fff;
+}
+
+/*hover effect*/
+header ul li a:hover,
+header ul li a.home{
+    background: #fff;
+    color : #2b1055;
+    border-radius: 20px; /*round border*/
+}
+
+/*image style*/
+section{
+    position : relative; /*relative to body*/
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    width:100%;
+    height:100vh;
+    padding : 450px;
+    overflow : hidden;
+}
+
+section img{
+    position :absolute;
+    top : 0;
+    left:0;
+    /*set size to browser's*/
+    width:100%;
+    height:100%;
+    object-fit: cover; /*image fit the browser*/
+}
+
+/*讓顏色混合背景*/
+section img#moon{
+    mix-blend-mode: screen;
+}
+
+section img#mountains_front{
+    z-index : 10;
+}
+
+/*merge the color between "section" and div*/
+section::after{
+    content:'';
+    position : absolute;
+    bottom : 0;
+    width:100%;
+    height:100px;
+    background: linear-gradient(to top, #1c0522,transparent);
+    z-index : 100;
+}
+
+/*text between images*/
+#text{
+    position : absolute;
+    color : #fff;
+    white-space: nowrap;
+    font-size: 80px;
+    font-weight: 700;
+    font-family: sans-serif;
+    margin-right: 1000px;
+    z-index : 9;
+}
+
+#button{
+    display: inline-block;
+    position : absolute;
+    color : #2b1055;
+    background-color: #fff;
+    text-decoration: none;
+    font-size: 1.5em;
+    border-radius: 20px;
+    padding : 8px 30px;
+    z-index: 100;
+    transform: translateY(100px); /*move down 100px*/
+}
+
+div.article{
+    background-color : #1c0522;
+    color : #fff;
+    padding : 100px;
+    font-family: sans-serif;
+}
+
+div.article h2{
+    font-size: 3.5em;
+}
+
+div.article p{
+    margin-bottom: 10px;
+    font-size:1.2em;
+}
