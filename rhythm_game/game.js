@@ -1,7 +1,7 @@
 // note peroidically falls down
 const speed = 1.5;
 const stop_time = 200; 
-const interval = 100;
+const interval = 50;
 // available keys
 const keys = ['a','s','d','f','h','j','k','l'];
 var second = 0;
@@ -9,6 +9,8 @@ var id_num = 0;
 var notes_a = []; // pair element: div + create time
 var notes_s = [];
 
+let combo_num_span = document.getElementById("combo_num");
+let combo_num = 0;
 // time function
 var timeID = window.setInterval(() => {
     second += 1*speed;
@@ -56,6 +58,11 @@ var timeID = window.setInterval(() => {
             if(top_int > 80)
             {
                 // miss
+                // update combo
+                combo_num = 0;
+                combo_num_span.innerText = `${combo_num}`;
+                combo_num_span.style.color = "white";
+
                 let text = document.getElementById(`score_${keys[n]}`);
                 // add miss text
                 text.innerText = "MISS";
@@ -117,7 +124,11 @@ window.addEventListener("keydown", (e) => {
                 // add good text
                 text.innerText = "GOOD";
                 text.classList.add("good");
-
+                // update combo
+                combo_num += 1;
+                combo_num_span.innerText = `${combo_num}`; 
+                if(combo_num_span.style.color == "gold")
+                    combo_num_span.style.color = "rgb(8, 142, 225)";
                 // clear effect after a second
                 window.setTimeout(()=>{
                     text.classList.remove("good");
@@ -135,7 +146,9 @@ window.addEventListener("keydown", (e) => {
                 // add perfect text
                 text.innerText = "PERFECT";
                 text.classList.add("perfect");
-
+                // update combo
+                combo_num += 1;
+                combo_num_span.innerText = `${combo_num}`; 
                 // clear effect after a second
                 window.setTimeout(()=>{
                     text.classList.remove("perfect");
@@ -166,9 +179,7 @@ window.addEventListener("keyup", (e) => {
         // if pressed
         if(jl.classList.contains("judge_line_pressed"))
             jl.classList.remove("judge_line_pressed");
-        bt.style.color = 'aquamarine';
-
-        
+        bt.style.color = 'aquamarine'; 
     }
 });
 
