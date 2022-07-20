@@ -9,6 +9,20 @@ var id_num = 0;
 var notes_a = []; // pair element: div + create time
 var notes_s = [];
 
+// score for hitting notes
+var hit_score = 0;
+function update_score(score){
+    let hit_score = document.getElementById("hit_score");
+    let str_score = String(score);
+    let return_score = '';
+
+    // zero padding
+    for(let i=0;i<7-str_score.length;i++)
+        return_score += '0';
+    return_score += str_score;
+    hit_score.innerText = return_score;
+};
+
 let combo_num_span = document.getElementById("combo_num");
 let combo_num = 0;
 // time function
