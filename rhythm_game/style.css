@@ -52,10 +52,36 @@ span.button{
     z-index: 10;
 }
 
-/* div when pressed */
+/* judge line when pressed */
 div.judge_line_pressed{
     transition-duration: 0.5s;
     height: 140px;
     box-shadow: 0 0 10px aquamarine, 0 0 10px aquamarine, 0 0 40px aquamarine, 0 0 140px aquamarine;
 }
 
+/* judge line when pressed perfect*/
+div.judge_line_perfect{
+    box-shadow: 0 0 10px gold, 0 0 10px gold, 0 0 40px gold, 0 0 140px gold;
+}
+
+div.score{
+    display: none;
+    position: absolute;
+    letter-spacing: 2px;
+    font-family: sans-serif;
+    font-weight: 700;
+    font-size: 30px;
+    padding: 5px;
+    top: 30%;
+    left: 30%;
+    width: auto;
+    height: auto;
+    z-index: 10;
+}
+
+div.perfect{
+    color: gold;
+}
+div.judge_line_good{
+    box-shadow: 0 0 10px rgb(8, 142, 225), 0 0 10px rgb(8, 142, 225), 0 0 40px rgb(8, 142, 225), 0 0 140px rgb(8, 142, 225);
+}
