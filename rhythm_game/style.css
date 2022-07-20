@@ -37,7 +37,7 @@ div.judge_line{
     position: absolute;
     display: block;
     top: 80%;
-    width: 12%;
+    width: 20%;
     bottom:10%;
     height: 5px;
     background-color: aquamarine;
@@ -65,23 +65,36 @@ div.judge_line_perfect{
 }
 
 div.score{
-    display: none;
-    position: absolute;
+    color: transparent;
+    position: relative;
     letter-spacing: 2px;
     font-family: sans-serif;
     font-weight: 700;
-    font-size: 30px;
+    font-size: 2px;
     padding: 5px;
-    top: 30%;
-    left: 30%;
-    width: auto;
+    top: 75%;
+    left: 10%;
+    width: 80px;
     height: auto;
     z-index: 10;
+    transition-duration: 0.5s;
 }
 
 div.perfect{
+    transition-duration: 0.5s;
     color: gold;
 }
+
+div.good{
+    transition-duration: 0.5s;
+    color: rgb(8, 142, 225);
+}
+
+div.miss{
+    transition-duration: 0.5s;
+    color: gray;
+}
+
 div.judge_line_good{
     box-shadow: 0 0 10px rgb(8, 142, 225), 0 0 10px rgb(8, 142, 225), 0 0 40px rgb(8, 142, 225), 0 0 140px rgb(8, 142, 225);
 }

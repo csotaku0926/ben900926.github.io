@@ -1,7 +1,9 @@
 // note peroidically falls down
-const speed = 1;
+const speed = 1.5;
 const stop_time = 200; 
 const interval = 100;
+// available keys
+const keys = ['a','s','d','f','h','j','k','l'];
 var second = 0;
 var id_num = 0;
 var notes_a = []; // pair element: div + create time
@@ -16,8 +18,6 @@ var timeID = window.setInterval(() => {
     var track_s = document.getElementById("track_s");
     if((second % 10 == 0) || (second % 15 == 0))
     {
-        console.log("create new note");
-
         // add to track a
         if(second % 10 == 0)
         {
@@ -45,9 +45,10 @@ var timeID = window.setInterval(() => {
     let i = 0;
     let all_notes = [notes_a, notes_s];
     
-    for(let notes of all_notes)
-        for (i=0; i<notes.length; i += 2)
+    for(let n=0; n<all_notes.length; n++)
+        for (i=0; i<all_notes[n].length; i += 2)
         {
+            let notes = all_notes[n];
             let note = notes[i];
             let top_int = second - notes[i+1];
             note.style.top = `${top_int}%` ;
@@ -55,6 +56,15 @@ var timeID = window.setInterval(() => {
             if(top_int > 80)
             {
                 // miss
+                let text = document.getElementById(`score_${keys[n]}`);
+                // add miss text
+                text.innerText = "MISS";
+                text.classList.add("miss");
+
+                // clear effect after a period
+                window.setTimeout(()=>{
+                    text.classList.remove("miss");
+                }, 500/speed);
                 // remove the poped note 
                 (notes.splice(i,1)[0]).remove();
                 notes.splice(i,1);
@@ -66,12 +76,10 @@ var timeID = window.setInterval(() => {
     if(second >= stop_time)
     {
         window.clearInterval(timeID);
-        console.log("timer stop!");
     }
 }, interval);      
 
-// available keys
-const keys = ['a','s','d','f','h','j','k','l'];
+
 // detect if pressed
 var isPressed = {};
 for(let k of keys)
@@ -101,17 +109,39 @@ window.addEventListener("keydown", (e) => {
         
         if(!isPressed[e.key])
         {
+            let text = document.getElementById(`score_${e.key}`);
             // judged good
             if(top_int >= 75 && top_int <= 77)
             {
                 jl.classList.add("judge_line_good");
+                // add good text
+                text.innerText = "GOOD";
+                text.classList.add("good");
+
+                // clear effect after a second
+                window.setTimeout(()=>{
+                    text.classList.remove("good");
+                    jl.classList.remove("judge_line_good");
+                }, 500/speed);
+                // remove note
                 (this_notes.splice(0,1)[0]).remove();
                 this_notes.splice(0,1);
             }
             // perfect
             else if(top_int >= 78 && top_int <= 80)
             {
+                // judge line
                 jl.classList.add("judge_line_perfect");
+                // add perfect text
+                text.innerText = "PERFECT";
+                text.classList.add("perfect");
+
+                // clear effect after a second
+                window.setTimeout(()=>{
+                    text.classList.remove("perfect");
+                    jl.classList.remove("judge_line_perfect");
+                }, 500/speed);
+                // remove note
                 (this_notes.splice(0,1)[0]).remove();
                 this_notes.splice(0,1);
             }
@@ -138,11 +168,6 @@ window.addEventListener("keyup", (e) => {
             jl.classList.remove("judge_line_pressed");
         bt.style.color = 'aquamarine';
 
-        // remove score classes
-        if(jl.classList.contains("judge_line_perfect"))
-            jl.classList.remove("judge_line_perfect");
-        if(jl.classList.contains("judge_line_good"))
-            jl.classList.remove("judge_line_good");
         
     }
 });
