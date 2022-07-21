@@ -1,6 +1,6 @@
 // note peroidically falls down
 const speed = 1;
-const stop_time = 200; 
+var stop_time = 2400; 
 const interval = 50;
 // available keys
 const keys = ['a','s','d','f','h','j','k','l'];
@@ -70,6 +70,13 @@ function update_score(score){
 };
 // this note should appear in track in time
 var first_note = [0,0,0,0,0,0,0,0];
+
+// play audio after first note is ready
+let audio = document.getElementById("selected_song");
+window.setTimeout(() => {
+    audio.play();
+}, interval * 80 / speed);
+
 //fetch notes.json
 fetch("notes.json")
 .then((res) => {
@@ -83,13 +90,14 @@ fetch("notes.json")
     m += (1+parseInt(len/10)*0.1)*(len%10);
     perfect_score = total_score / m;*/
     // put note into each list with json file
-    for(let note of json)
+    for(let note of json["notes"])
     {
         let key = keys_dict[note["track"]];
-        (all_second[key]).push(note["second"]);
+        // audio may have delay
+        (all_second[key]).push(note["second"] + json["delay"]);
     }
+    stop_time = json["stop_time"];
     // time function
-    let ti = 0;
     var timeID = window.setInterval(() => {
         second += 1*speed;
         
@@ -111,14 +119,7 @@ fetch("notes.json")
                 first_note[i] += 1;
             }
 
-        }
-        // add to track every interval time
-/*
-        tracks[ti].appendChild(newNote);
-        all_notes[ti].push(newNote);
-        all_second[ti].push(second);
-        ti = (ti+1)%(1);  */
-               
+        }          
         // every note drop down by time
         let i = 0;
 
@@ -160,10 +161,12 @@ fetch("notes.json")
         if(second >= stop_time)
         {
             window.clearInterval(timeID);
+            audio.pause();
+            audio.currentTime = 0;
         }
     }, interval);      
 
-})
+});
 
 // detect if pressed
 var isPressed = {};
