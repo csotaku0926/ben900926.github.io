@@ -23,6 +23,7 @@ var notes_h = [];
 var notes_j = [];
 var notes_k = []; 
 var notes_l = [];
+
 // second element
 var second_a = []; 
 var second_s = [];
@@ -32,6 +33,7 @@ var second_h = [];
 var second_j = [];
 var second_k = []; 
 var second_l = [];
+
 // each track
 var track_a = document.getElementById("track_a");
 var track_s = document.getElementById("track_s");
@@ -41,6 +43,7 @@ var track_h = document.getElementById("track_h");
 var track_j = document.getElementById("track_j");
 var track_k = document.getElementById("track_k");
 var track_l = document.getElementById("track_l");
+
 // combine 
 var all_notes = [notes_a, notes_s, notes_d, notes_f, notes_h, notes_j, notes_k, notes_l];
 var all_second = [second_a, second_s, second_d, second_f, second_h, second_j, second_k, second_l];
@@ -49,14 +52,20 @@ var tracks = [track_a, track_s, track_d, track_f, track_h, track_j, track_k, tra
 // combo variables
 let combo_num_span = document.getElementById("combo_num");
 let combo_num = 0;
+
 // score for hitting notes
 var hit_score = 0.0;
+
 // want to make total 1000000
 const total_score = 1000000;
 var perfect_score = 140;
 var good_score = 0.5*perfect_score;
+
 // every 10 combo have 0.1 addition
 var combo_multiply = 1 + parseInt(combo_num/10)*0.1;
+// this note should appear in track in time
+var first_note = [0,0,0,0,0,0,0,0];
+
 function update_score(score){
     let hit_score = document.getElementById("hit_score");
     let str_score = String(score);
@@ -68,8 +77,85 @@ function update_score(score){
     return_score += str_score;
     hit_score.innerText = return_score;
 };
-// this note should appear in track in time
-var first_note = [0,0,0,0,0,0,0,0];
+
+function draw_note (json) {
+    // put note into each list with json file
+    for(let note of json["notes"])
+    {
+        let key = keys_dict[note["track"]];
+        // audio may have delay
+        (all_second[key]).push(note["second"] + json["delay"]);
+    }
+    stop_time = json["stop_time"];
+    // time function
+    var timeID = window.setInterval(() => {
+        second += 1*speed;
+        
+        // check each track
+        for(let i=0; i<keys.length; i+=1)
+        {
+            let this_first_note = first_note[i];
+            let this_second = all_second[i];
+            // reach time
+            if(this_first_note < this_second.length && this_second[this_first_note] == second)
+            {
+                let this_track = tracks[i];
+                // add note to track
+                let newNote = document.createElement("div");
+                newNote.classList.add("note");
+                newNote.style.top = '0%';
+                this_track.appendChild(newNote);
+                all_notes[i].push(newNote);
+                first_note[i] += 1;
+            }
+
+        }          
+        // every note drop down by time
+        let i = 0;
+
+        for(let n=0; n<all_notes.length; n++)
+            for (i=0; i<all_notes[n].length; i += 1)
+            {
+                let notes = all_notes[n];
+                let seconds = all_second[n];
+                let note = notes[i];
+                let top_int = second - seconds[i];
+                note.style.top = `${top_int}%` ;
+                // reach judge line
+                if(top_int > 80)
+                {
+                    // miss
+                    // update combo
+                    combo_num = 0;
+                    combo_num_span.innerText = `${combo_num}`;
+                    combo_num_span.style.color = "white";
+
+                    let text = document.getElementById(`score_${keys[n]}`);
+                    // add miss text
+                    text.innerText = "MISS";
+                    text.classList.add("miss");
+
+                    // clear effect after a period
+                    window.setTimeout(()=>{
+                        text.classList.remove("miss");
+                    }, 500/speed);
+                    // remove the poped note 
+                    (notes.splice(i,1)[0]).remove();
+                    seconds.splice(i,1);
+                    i-=1;
+                    first_note[n] -=1;
+                }  
+            }
+
+        // stop timer
+        if(second >= stop_time)
+        {
+            window.clearInterval(timeID);
+            audio.pause();
+            audio.currentTime = 0;
+        }
+    }, interval);      
+};
 
 // add the button interaction to play audio
 let confirm_button = document.getElementById("confirm_button");
@@ -83,96 +169,19 @@ confirm_button.addEventListener('click',(() => {
         audio.play();
     }, interval * 80 / speed);
 
-    // fetch notes.json
-    fetch("notes.json")
-    .then((res) => {
-        return res.json();
-    })
-    .then((json) => {
-        /* make total score 1000000
-        let m = 0, len = json.length;
-        for(let j=0; j<(len/10);j++)
-            m += (1+j*0.1)*10;
-        m += (1+parseInt(len/10)*0.1)*(len%10);
-        perfect_score = total_score / m;*/
-        // put note into each list with json file
-        for(let note of json["notes"])
-        {
-            let key = keys_dict[note["track"]];
-            // audio may have delay
-            (all_second[key]).push(note["second"] + json["delay"]);
-        }
-        stop_time = json["stop_time"];
-        // time function
-        var timeID = window.setInterval(() => {
-            second += 1*speed;
-            
-            // check each track
-            for(let i=0; i<keys.length; i+=1)
-            {
-                let this_first_note = first_note[i];
-                let this_second = all_second[i];
-                // reach time
-                if(this_first_note < this_second.length && this_second[this_first_note] == second)
-                {
-                    let this_track = tracks[i];
-                    // add note to track
-                    let newNote = document.createElement("div");
-                    newNote.classList.add("note");
-                    newNote.style.top = '0%';
-                    this_track.appendChild(newNote);
-                    all_notes[i].push(newNote);
-                    first_note[i] += 1;
-                }
+    /**
+     * Since most of web servers have blocked direct file system access
+     * (i.e. cannot use file protocol load on http website)
+     * 
+     * we must run this code on a server
+     * otherwise there will be CORS error
+     * 
+     */
 
-            }          
-            // every note drop down by time
-            let i = 0;
-
-            for(let n=0; n<all_notes.length; n++)
-                for (i=0; i<all_notes[n].length; i += 1)
-                {
-                    let notes = all_notes[n];
-                    let seconds = all_second[n];
-                    let note = notes[i];
-                    let top_int = second - seconds[i];
-                    note.style.top = `${top_int}%` ;
-                    // reach judge line
-                    if(top_int > 80)
-                    {
-                        // miss
-                        // update combo
-                        combo_num = 0;
-                        combo_num_span.innerText = `${combo_num}`;
-                        combo_num_span.style.color = "white";
-
-                        let text = document.getElementById(`score_${keys[n]}`);
-                        // add miss text
-                        text.innerText = "MISS";
-                        text.classList.add("miss");
-
-                        // clear effect after a period
-                        window.setTimeout(()=>{
-                            text.classList.remove("miss");
-                        }, 500/speed);
-                        // remove the poped note 
-                        (notes.splice(i,1)[0]).remove();
-                        seconds.splice(i,1);
-                        i-=1;
-                        first_note[n] -=1;
-                    }  
-                }
-
-            // stop timer
-            if(second >= stop_time)
-            {
-                window.clearInterval(timeID);
-                audio.pause();
-                audio.currentTime = 0;
-            }
-        }, interval);      
-
-    });
+    fetch ("notes.json")
+    .then (res => res.json())
+    .then ((json) => draw_note(json))
+    
 }));
 // detect if pressed
 var isPressed = {};
